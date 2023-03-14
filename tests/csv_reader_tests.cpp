@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 #include <boost/lexical_cast.hpp>
+#include <fstream>
 
 template<typename Q>
 void print_queue(std::string_view name, Q q)
@@ -112,6 +113,34 @@ TEST(CSVUseCase, TwoRecords)
     expected.push(CreateExpectedElement(date2, first2, second2));
     expected.push(CreateExpectedElement(date1, first1, second1));
 
-    auto read_size = CSVUseCase::Process(CSVReader::ReadCSV(std::move(csv)));
-    EXPECT_EQ(expected.size(), read_size);
+    auto csv_result = CSVUseCase::Process(CSVReader::ReadCSV(std::move(csv)));
+    EXPECT_EQ(expected.size(), csv_result.GetDocSize());
+}
+
+TEST(CSVUseCase, FromFile)
+{
+    auto read_file = []() -> std::optional<std::string>
+    {
+        std::ifstream file("../text.csv");
+        if (!file.is_open())
+        {
+            std::cerr << "Fail to read file" << std::endl;
+            return std::nullopt;
+        }
+
+        std::ostringstream data;
+        data << file.rdbuf();
+
+        return std::move(data).str();
+    };
+
+    auto csv = read_file();
+
+//    std::priority_queue<CSVReader::CSVElement> expected;
+//    expected.push(CreateExpectedElement(date2, first2, second2));
+//    expected.push(CreateExpectedElement(date1, first1, second1));
+
+    auto csv_result = CSVUseCase::Process(CSVReader::ReadCSV(std::move(*csv)));
+    std::cout << csv_result.GetDocSize() << std::endl;
+//    EXPECT_EQ(expected.size(), read_size);
 }

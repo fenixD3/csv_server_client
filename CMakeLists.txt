@@ -51,9 +51,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
         Boost::serialization
+        pthread
+        rt
         )
 
-find_package(GTest REQUIRED)
+find_package(GTest)
 
 if (${GTest_FOUND})
     set(CSV_READER_TESTS csv_reader_tests)

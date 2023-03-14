@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <thread>
+#include <iostream>
 
 struct TransferredMessage
 {
@@ -15,18 +15,8 @@ struct TransferredMessage
     std::string Message;
 };
 
-struct Worker
+inline std::ostream& operator<<(std::ostream& out, const TransferredMessage& msg)
 {
-public:
-    std::thread Thread;
-
-    template <typename TFunc>
-    Worker(TFunc func)
-        : Thread(std::move(func))
-    {}
-
-    ~Worker()
-    {
-        Thread.join();
-    }
-};
+    out << static_cast<int>(msg.Indicator) << ' ' << msg.Message;
+    return out;
+}

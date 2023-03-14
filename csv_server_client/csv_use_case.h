@@ -2,6 +2,7 @@
 
 #include <queue>
 #include <string>
+#include <memory>
 
 class CSVReader
 {
@@ -25,5 +26,20 @@ public:
 class CSVUseCase
 {
 public:
-    static size_t Process(const CSVReader::csv_container& doc);
+    class Result
+    {
+    private:
+        std::string m_MaxDate;
+        double m_Quotient;
+        size_t m_DocSize;
+
+    public:
+        Result(std::string max_date, double quotient, size_t doc_size);
+
+        std::string StealMaxDate();
+        double GetQuotient() const;
+        size_t GetDocSize() const;
+    };
+
+    static Result Process(const CSVReader::csv_container& doc);
 };

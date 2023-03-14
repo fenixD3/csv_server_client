@@ -10,9 +10,18 @@ bool operator==(const TransferredMessage& lhs, const TransferredMessage& rhs)
 
 TEST(MsgSerial, SerialAndDeserial)
 {
-    TransferredMessage expected{TransferredMessage::TypeIndicator::DATA, "Hello"};
+    TransferredMessage expected{TransferredMessage::TypeIndicator::DATA, "Hello\nWorld\n"};
 
     auto serial_data = ProtocolSerializer::Serialize(expected);
+    std::clog << std::boolalpha;
+    for (auto it : serial_data)
+    {
+        if (it == '\n')
+        {
+            std::clog << true << ' ';
+        }
+    }
+    std::clog << std::endl << "After for: " << (*serial_data.rbegin() == '\n') << std::endl;
     std::clog << serial_data << std::endl << "Size: " << serial_data.size() << std::endl;
 
     TransferredMessage after_way = ProtocolSerializer::Deserialize(std::move(serial_data));

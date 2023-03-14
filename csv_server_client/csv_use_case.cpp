@@ -51,9 +51,29 @@ CSVReader::csv_container CSVReader::ReadCSV(std::string&& text)
     return csv_lines;
 }
 
-size_t CSVUseCase::Process(const CSVReader::csv_container& doc)
+CSVUseCase::Result::Result(std::string max_date, double quotient, size_t doc_size)
+    : m_MaxDate(std::move(max_date))
+    , m_Quotient(quotient)
+    , m_DocSize(doc_size)
+{}
+
+std::string CSVUseCase::Result::StealMaxDate()
+{
+    return std::move(m_MaxDate);
+}
+
+double CSVUseCase::Result::GetQuotient() const
+{
+    return m_Quotient;
+}
+
+size_t CSVUseCase::Result::GetDocSize() const
+{
+    return m_DocSize;
+}
+
+CSVUseCase::Result CSVUseCase::Process(const CSVReader::csv_container& doc)
 {
     const auto& high_data = doc.top();
-    std::clog << high_data.FirstNum / high_data.SecondNum << std::endl;
-    return doc.size();
+    return Result(high_data.Date, high_data.FirstNum / high_data.SecondNum, doc.size());
 }
